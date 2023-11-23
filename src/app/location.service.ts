@@ -19,8 +19,10 @@ export class LocationService {
 
     private loadLocationsFromLocaleStorage() {
         let locationsString = localStorage.getItem(LOCATIONS);
-        if (locationsString)
+        // This could be one-liner, but I prefer to wrap it for better readability
+        if (locationsString) {
             this.#locations.next(JSON.parse(locationsString));
+        }
     }
 
     addLocation(zipcode: string) {
