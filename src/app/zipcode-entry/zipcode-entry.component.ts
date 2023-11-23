@@ -12,5 +12,4 @@ export class ZipcodeEntryComponent {
   addLocation(zipcode : string){
     this.service.addLocation(zipcode);
   }
-
 }
