@@ -1,5 +1,5 @@
 <div>
-    <app-tabs>
+    <app-tabs [tabsIdentifier]="this.tabsIdentifier">
         <app-tab *ngFor="let location of currentConditionsByZip(); trackBy: this.currentConditionsByZipTrackBy">
             <ng-template appTabHeader>
                 <div class="location-header">

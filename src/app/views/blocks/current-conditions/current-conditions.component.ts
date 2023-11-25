@@ -10,6 +10,7 @@ import { ConditionsAndZip } from '../../../types/conditions-and-zip.type';
     styleUrls: ['./current-conditions.component.css']
 })
 export class CurrentConditionsComponent {
+    tabsIdentifier = 'current-conditions';
 
     private router = inject(Router);
     protected weatherService = inject(WeatherService);
