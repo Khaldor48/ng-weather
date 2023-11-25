@@ -2,3 +2,14 @@
 body {
   padding: 10px;
 }
+
+:root {
+  --color-error: #c71010;
+  --color-primary: #617aa0;
+}
+
+.error {
+  display: block;
+  margin-top: 5px;
+  color: var(--color-error);
+}

@@ -1,0 +1,27 @@
+.tab-header-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  .tab-header {
+    padding: 5px 10px;
+    transition: opacity .3s ease;
+    color: #fff;
+    background: var(--color-primary);
+    opacity: 0.7;
+    cursor: pointer;
+
+    &.active {
+      cursor: default;
+      opacity: 1;
+    }
+  }
+}
+
+.tab-body {
+  display: none;
+
+  &.active {
+    display: block;
+  }
+}

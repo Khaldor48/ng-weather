@@ -1,0 +1,26 @@
+<div>
+    <div class="tab-header-container">
+        <div (click)="this.activatedTabIndex$$.set(tabIndex)"
+             *ngFor="let tab of this.tabs; let tabIndex = index"
+             [class.active]="this.activatedTabIndex$$() === tabIndex"
+             class="tab-header">
+            <ng-container
+                    *ngTemplateOutlet="tab.header?.template ?? defaultHeaderTemplate; context: { $implicit: tabIndex }"/>
+        </div>
+    </div>
+    <div class="tab-content">
+        <div *ngFor="let tab of this.tabs; let tabIndex = index" [class.active]="this.activatedTabIndex$$() === tabIndex"
+             class="tab-body">
+            <ng-container
+                    *ngTemplateOutlet="tab.body?.template ?? defaultBodyTemplate; context: { $implicit: tabIndex }"/>
+        </div>
+    </div>
+</div>
+
+<ng-template #defaultHeaderTemplate let-tabIndex>
+    Tab #{{ tabIndex }}
+</ng-template>
+
+<ng-template #defaultBodyTemplate let-tabIndex>
+    Tab #{{ tabIndex }} has no content.
+</ng-template>

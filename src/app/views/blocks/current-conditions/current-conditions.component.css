@@ -1,0 +1,20 @@
+
+.flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+.location-remove,
+.location-body {
+  cursor: pointer;
+}
+
+.location-remove {
+  margin-left: 10px;
+}
+
+.location-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

@@ -1,0 +1,34 @@
+<div>
+    <app-tabs>
+        <app-tab *ngFor="let location of currentConditionsByZip(); trackBy: this.currentConditionsByZipTrackBy">
+            <ng-template appTabHeader>
+                <div class="location-header">
+                    <span class="location-title">
+                       {{ location.data.name }} ({{ location.zip }})
+                    </span>
+                    <span class="location-remove" (click)="locationService.removeLocation(location.zip)">&times;</span>
+                </div>
+            </ng-template>
+            <ng-template appTabBody let-tabIndex>
+                <div class="location-body well flex" (click)="showForecast(location.zip)">
+                    <div>
+                        <h4>Current conditions: {{ location.data.weather[0].main }}</h4>
+                        <h4>Temperatures today:</h4>
+                        <p>
+                            Current {{ location.data.main.temp | number:'.0-0' }}
+                            - Max {{ location.data.main.temp_max | number:'.0-0' }}
+                            - Min {{ location.data.main.temp_min | number:'.0-0' }}
+                        </p>
+                        <p>
+                            <a [routerLink]="['/forecast', location.zip]">Show 5-day forecast
+                                for {{ location.data.name }}</a>
+                        </p>
+                    </div>
+                    <div>
+                        <img [src]="this.weatherService.getWeatherIcon(location.data.weather[0].id)">
+                    </div>
+                </div>
+            </ng-template>
+        </app-tab>
+    </app-tabs>
+</div>

@@ -1,0 +1,18 @@
+<form (ngSubmit)="this.onSubmit()" [formGroup]="this.form">
+    <div class="well">
+        <h2>Enter a zipcode:</h2>
+
+        <div>
+            <input [formControlName]="ZipFormControlsEnum.zipcode" class="form-control" placeholder="Zipcode"
+                   type="text">
+            <span *ngIf="(this.form.touched || this.form.dirty) && this.form.get(ZipFormControlsEnum.zipcode).hasError('required')"
+                  class="error">* This field is required</span>
+        </div>
+
+        <br>
+
+        <button class="btn btn-primary">
+            Add location
+        </button>
+    </div>
+</form>
