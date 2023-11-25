@@ -1,22 +1,23 @@
 import { inject, Injectable, Signal, signal } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { catchError, filter, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
-import { from, Observable, of } from 'rxjs';
+import { from, Observable, of, throwError } from 'rxjs';
 
 import { CurrentConditions } from '../views/blocks/current-conditions/current-conditions.type';
-import { Forecast } from '../views/pages/forecasts-list/forecast.type';
 import { LocationService } from './location.service';
 import { ConditionsAndZip } from '../types/conditions-and-zip.type';
 import { WeatherApiErrorInterface } from '../interfaces/weather-api-error.interface';
 import { WEATHER_API_CONFIG } from '../configs/weather-api.config';
+import { WeatherHttpService } from './weather-http.service';
+import { Forecast } from '../views/pages/forecasts-list/forecast.type';
 
 @Injectable({providedIn: 'root'})
 export class WeatherService {
 
     currentConditions = signal<ConditionsAndZip[]>([]);
     private locationService = inject(LocationService);
-    private http = inject(HttpClient);
+    private weatherHttpService = inject(WeatherHttpService);
     private locationsWithErrors: string[] = [];
 
     constructor() {
@@ -56,8 +57,8 @@ export class WeatherService {
 
     private fetchCurrentConditions(zip: string): Observable<CurrentConditions> {
         // We catch failed zipcodes and return of() to preserve stream
-        return this.http.get<CurrentConditions>(`${WEATHER_API_CONFIG.URL}/weather?zip=${zip},us&units=imperial&APPID=${WEATHER_API_CONFIG.APPID}`).pipe(
-            catchError(({error}: HttpErrorResponse) => this.handleError(error, zip)),
+        return this.weatherHttpService.getCurrentConditions(zip).pipe(
+            catchError(({error}: HttpErrorResponse) => this.handleCurrentConditionError(error, zip)),
             filter(Boolean),
             tap((data: CurrentConditions) => this.addCurrentConditions({zip, data}))
         );
@@ -79,6 +80,12 @@ export class WeatherService {
         })
     }
 
+    fetchForecast(zip: string): Observable<Forecast | string | void> {
+        return this.weatherHttpService.getForecast(zip).pipe(
+            catchError(({error}: HttpErrorResponse) => this.handleForecastError(error, zip)),
+        )
+    }
+
     removeCurrentConditions(zip: string): void {
         // We don't use mutate anymore since it has been removed, instead we use update for immutability
         this.currentConditions.update(currentConditions => {
@@ -92,21 +99,25 @@ export class WeatherService {
         })
     }
 
-    handleError(error: WeatherApiErrorInterface, zipcode: string): Observable<void> {
-        const errorText = `Error(${error.cod}) occurred while loading zipcode: ${zipcode} - message: ${error.message}`;
-        alert(errorText);
-        console.error(errorText);
-        this.locationsWithErrors.push(zipcode);
+    private handleForecastError(error: WeatherApiErrorInterface, zipcode: string): Observable<void> {
+        return throwError(`Error(${error.cod}) occurred while loading forecast for zipcode: ${zipcode} - message: ${error.message}`);
+    }
+
+    private handleCurrentConditionError(error: WeatherApiErrorInterface, zipcode: string): Observable<void> {
+        if (error.cod) {
+            const errorText = `Error(${error.cod}) occurred while loading condition for zipcode: ${zipcode} - message: ${error.message}`;
+            alert(errorText);
+            console.error(errorText);
+            this.locationsWithErrors.push(zipcode);
+            return of();
+        }
+
+        console.error(error);
         return of();
     }
 
     getCurrentConditions(): Signal<ConditionsAndZip[]> {
         return this.currentConditions.asReadonly();
-    }
-
-    getForecast(zipcode: string): Observable<Forecast> {
-        // Here we make a request to get the forecast data from the API. Note the use of backticks and an expression to insert the zipcode
-        return this.http.get<Forecast>(`${WEATHER_API_CONFIG.URL}/forecast/daily?zip=${zipcode},us&units=imperial&cnt=5&APPID=${WEATHER_API_CONFIG.APPID}`);
     }
 
     getWeatherIcon(id: number): string {

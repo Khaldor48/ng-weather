@@ -10,7 +10,7 @@
                 </div>
             </ng-template>
             <ng-template appTabBody let-tabIndex>
-                <div class="location-body well flex" (click)="showForecast(location.zip)">
+                <div class="location-body well flex" (click)="this.showForecast(location.zip)">
                     <div>
                         <h4>Current conditions: {{ location.data.weather[0].main }}</h4>
                         <h4>Temperatures today:</h4>

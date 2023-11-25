@@ -26,8 +26,12 @@ export class TabsComponent implements AfterContentInit {
         this.activatedTabIndex$$.set(tabIndex ?? 0);
     }
 
-    // When you have activated last tab, and it gets removed, you need to go the new last tab index, otherwise you'll be stuck on empty page (no tab activated)
+    // When you have activated last tab, and it gets removed, we need to go adjust tab index, otherwise you'll be stuck with no tab activated
     ngAfterContentInit() {
+        this.handleTabChanges();
+    }
+
+    handleTabChanges() {
         this.tabs.changes.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((updatedTabs: QueryList<TabComponent>) => {
             if (this.activatedTabIndex$$() + 1 > updatedTabs.length) {
                 const updatedIndex = updatedTabs.length - 1;

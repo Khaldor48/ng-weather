@@ -5,13 +5,15 @@ import { TabBodyDirective } from './directives/tab-body.directive';
 import { TabHeaderDirective } from './directives/tab-header.directive';
 import { NgForOf, NgTemplateOutlet } from '@angular/common';
 
+const declarations = [TabsComponent, TabComponent, TabBodyDirective, TabHeaderDirective];
+
 @NgModule({
-    declarations: [TabsComponent, TabComponent, TabBodyDirective, TabHeaderDirective],
     imports: [
         NgForOf,
         NgTemplateOutlet
     ],
-    exports: [TabsComponent, TabComponent, TabBodyDirective, TabHeaderDirective]
+    declarations: declarations,
+    exports: declarations
 })
 export class TabsModule {
 
