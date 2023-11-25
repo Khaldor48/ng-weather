@@ -25,10 +25,11 @@ export class TabsComponent implements OnInit, AfterContentInit {
     @Input() tabsIdentifier: string;
 
     @ContentChildren(TabComponent) tabs: QueryList<TabComponent>;
+
+    injector = inject(Injector);
     destroyRef = inject(DestroyRef);
 
     activatedTabIndex$$ = signal<number>(0);
-    injector = inject(Injector);
 
     @Input() set activatedTabIndex(tabIndex: number) {
         this.activatedTabIndex$$.set(tabIndex ?? 0);
