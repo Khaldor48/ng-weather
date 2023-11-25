@@ -6,5 +6,5 @@ import { RequestCacheService } from '../../../services/request-cache.service';
   templateUrl: './main-page.component.html'
 })
 export class MainPageComponent {
-  protected cacheService = inject(RequestCacheService);
+  protected requestCacheService = inject(RequestCacheService);
 }

@@ -7,12 +7,12 @@ import { RequestCacheService } from '../services/request-cache.service';
 
 @Injectable()
 export class CacheHttpInterceptor implements HttpInterceptor {
-    cacheService = inject(RequestCacheService);
+    requestCacheService = inject(RequestCacheService);
 
     intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
         if (request.context.has(CACHE.TOKEN)) {
             const cacheKey = `_cache_${encodeURIComponent(request.url)}`;
-            const cachedItem = this.cacheService.get(cacheKey);
+            const cachedItem = this.requestCacheService.get(cacheKey);
 
             if (cachedItem?.body) {
                 return of(new HttpResponse({body: cachedItem.body, status: 200}));
@@ -29,7 +29,7 @@ export class CacheHttpInterceptor implements HttpInterceptor {
         return pipe(
             filter((event: HttpEvent<unknown>) => event instanceof HttpResponse),
             tap((response: HttpResponse<any>) => {
-                this.cacheService.set(cacheKey, response.body, cacheDuration);
+                this.requestCacheService.set(cacheKey, response.body, cacheDuration);
             })
         );
     }
