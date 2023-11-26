@@ -1,10 +1,10 @@
-import { Component, inject } from '@angular/core';
-import { RequestCacheService } from '../../../services/request-cache.service';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-  selector: 'app-main-page',
-  templateUrl: './main-page.component.html'
+    selector: 'app-main-page',
+    templateUrl: './main-page.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MainPageComponent {
-  protected requestCacheService = inject(RequestCacheService);
+
 }

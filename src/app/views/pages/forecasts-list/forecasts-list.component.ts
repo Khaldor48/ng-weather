@@ -1,18 +1,19 @@
-import { Component, inject } from '@angular/core';
-import { WeatherService } from '../../../services/weather.service';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Forecast } from './forecast.type';
 import { asyncScheduler } from 'rxjs';
+import { WeatherService } from '../../../services/weather.service';
+import { Forecast } from './forecast.type';
 
 @Component({
     selector: 'app-forecasts-list',
     templateUrl: './forecasts-list.component.html',
-    styleUrls: ['./forecasts-list.component.css']
+    styleUrls: ['./forecasts-list.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ForecastsListComponent {
 
     zipcode: string;
-    forecast: Forecast;
+    forecast = signal<Forecast | null>(null);
 
     router = inject(Router);
     protected weatherService = inject(WeatherService);
@@ -28,7 +29,7 @@ export class ForecastsListComponent {
             this.weatherService.fetchForecast(this.zipcode)
                 .subscribe({
                     next: (forecast: Forecast) => {
-                        this.forecast = forecast;
+                        this.forecast.set(forecast);
                     },
                     error: async (error: string) => {
                         console.error(error);

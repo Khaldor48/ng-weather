@@ -8,8 +8,8 @@ import {
     QueryList,
     signal
 } from '@angular/core';
-import { TabComponent } from '../tab/tab.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TabComponent } from '../tab/tab.component';
 
 @Component({
     selector: 'app-tabs',

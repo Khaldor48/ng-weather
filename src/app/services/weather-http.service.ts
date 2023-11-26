@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Forecast } from '../views/pages/forecasts-list/forecast.type';
-import { WEATHER_API_CONFIG } from '../configs/weather-api.config';
 import { HttpClient, HttpContext } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { WEATHER_API_CONFIG } from '../configs/weather-api.config';
+import { Forecast } from '../views/pages/forecasts-list/forecast.type';
 import { CurrentConditions } from '../views/blocks/current-conditions/current-conditions.type';
-import { CACHE } from '../configs/cache.config';
+import { CACHE } from '../features/request-cache/configs/cache.config';
 
 @Injectable({providedIn: 'root'})
 export class WeatherHttpService {
@@ -14,7 +14,7 @@ export class WeatherHttpService {
         return this.http.get<Forecast>(`${WEATHER_API_CONFIG.URL}/forecast/daily?zip=${zip},us&units=imperial&cnt=5&APPID=${WEATHER_API_CONFIG.APPID}`, {context: this.createCacheContext()});
     }
 
-    // example of defining custom cache duration (20 seconds)
+    // example of defining custom cache duration (10 seconds)
     /*getForecast(zip: string): Observable<Forecast> {
         return this.http.get<Forecast>(`${WEATHER_API_CONFIG.URL}/forecast/daily?zip=${zip},us&units=imperial&cnt=5&APPID=${WEATHER_API_CONFIG.APPID}`, {context: this.createCacheContext(10 * 1000)}); // 10 seconds
     }*/
@@ -23,7 +23,8 @@ export class WeatherHttpService {
         return this.http.get<CurrentConditions>(`${WEATHER_API_CONFIG.URL}/weather?zip=${zip},us&units=imperial&APPID=${WEATHER_API_CONFIG.APPID}`, {context: this.createCacheContext()});
     }
 
-    createCacheContext(cacheDuration: number = CACHE.DURATION): HttpContext {
+    // when duration is 0, then the global cache will be used
+    createCacheContext(cacheDuration: number = 0): HttpContext {
         return new HttpContext().set(CACHE.TOKEN, cacheDuration.toString());
     }
 }

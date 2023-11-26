@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
 import { MonoTypeOperatorFunction, Observable, of, pipe } from 'rxjs';
-import { CACHE } from '../configs/cache.config';
 import { filter, tap } from 'rxjs/operators';
+import { CACHE } from '../configs/cache.config';
 import { RequestCacheService } from '../services/request-cache.service';
 
 @Injectable()

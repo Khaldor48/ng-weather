@@ -1,0 +1,24 @@
+<div class="well">
+    <h2>Cache setting:</h2>
+
+    <div class="flex">
+        <div>
+            <label for="duration">Duration</label>
+            <input [formControl]="this.cacheDuration" class="form-control" id="duration" name="duration" type="text">
+            <span *ngIf="(this.cacheDuration.touched || this.cacheDuration.dirty) && this.cacheDuration.hasError('required')"
+                  class="error">* if not set, then default value of 2 is used</span>
+        </div>
+        <div>
+            <label for="multiplier">Multiplier</label>
+            <select [formControl]="this.cacheMultiplier" class="form-control" id="multiplier" name="multiplier">
+                <option *ngFor="let multiplier of this.multipliers"
+                        [value]="multiplier.value">{{ multiplier.viewValue }}</option>
+            </select>
+        </div>
+    </div>
+
+    <br>
+
+    <button (click)="this.requestCacheService.clearCache()" class="btn btn-danger" type="button">Clear request cache
+    </button>
+</div>
