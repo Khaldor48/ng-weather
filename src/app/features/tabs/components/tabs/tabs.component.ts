@@ -2,9 +2,12 @@ import {
     AfterContentInit,
     Component,
     ContentChildren,
-    DestroyRef, effect,
-    inject, Injector,
-    Input, OnInit,
+    DestroyRef,
+    effect,
+    inject,
+    Injector,
+    Input,
+    OnInit,
     QueryList,
     signal
 } from '@angular/core';
@@ -36,15 +39,24 @@ export class TabsComponent implements OnInit, AfterContentInit {
     }
 
     ngOnInit() {
-        if (this.tabsIdentifier) {
-            const storedActivatedTabIndex = localStorage.getItem(this.getStorageKey());
-            if (storedActivatedTabIndex) {
-                this.activatedTabIndex$$.set(JSON.parse(storedActivatedTabIndex));
-            }
-            effect(() => {
-                localStorage.setItem(this.getStorageKey(), JSON.stringify(this.activatedTabIndex$$()));
-            }, { injector: this.injector });
+        this.handleActivatedTabStorage();
+    }
+
+    handleActivatedTabStorage() {
+        if (!this.tabsIdentifier) {
+            return;
         }
+
+        const storedActivatedTabIndex = localStorage.getItem(this.getStorageKey());
+
+        if (storedActivatedTabIndex) {
+            this.activatedTabIndex$$.set(JSON.parse(storedActivatedTabIndex));
+        }
+
+        effect(() => {
+            localStorage.setItem(this.getStorageKey(), JSON.stringify(this.activatedTabIndex$$()));
+        }, {injector: this.injector});
+
     }
 
     // When you have activated last tab, and it gets removed, we need to go adjust tab index, otherwise you'll be stuck with no tab activated
