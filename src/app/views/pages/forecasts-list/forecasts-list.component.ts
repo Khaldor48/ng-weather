@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { asyncScheduler } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { asyncScheduler, of } from 'rxjs';
 import { WeatherService } from '../../../services/weather.service';
 import { Forecast } from './forecast.type';
 
@@ -12,35 +14,28 @@ import { Forecast } from './forecast.type';
 })
 export class ForecastsListComponent {
 
-    zipcode: string;
-    forecast = signal<Forecast | null>(null);
-
     router = inject(Router);
     protected weatherService = inject(WeatherService);
     private activatedRoute = inject(ActivatedRoute);
-
-    constructor() {
-        this.fetchForecast();
-    }
+    forecast = toSignal<Forecast | null>(this.fetchForecast());
 
     private fetchForecast() {
-        this.activatedRoute.params.subscribe(params => {
-            this.zipcode = params['zipcode'];
-            this.weatherService.fetchForecast(this.zipcode)
-                .subscribe({
-                    next: (forecast: Forecast) => {
-                        this.forecast.set(forecast);
-                    },
-                    error: async (error: string) => {
+        return this.activatedRoute.params.pipe(
+            map((params) => params['zipcode']),
+            switchMap((zipCode: string) =>
+                this.weatherService.fetchForecast(zipCode).pipe(
+                    catchError((error) => {
                         console.error(error);
-                        await this.router.navigate(['/']);
+                        this.router.navigate(['/']);
                         // running as macro task, because we want to first finish navigation and then fire alert message
                         // this won't be necessary if we have some separate message service (toastr etc.), I did it for purposes of using alert which blocks execution
                         asyncScheduler.schedule(() => {
                             alert(error);
                         });
-                    }
-                });
-        });
+                        return of();
+                    })
+                )
+            )
+        );
     }
 }

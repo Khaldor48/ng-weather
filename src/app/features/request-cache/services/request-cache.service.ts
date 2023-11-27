@@ -5,10 +5,9 @@ import { CACHE } from '../configs/cache.config';
 
 @Injectable({providedIn: 'root'})
 export class RequestCacheService {
+    cacheSettings = signal<CacheSettingsInterface>({} as CacheSettingsInterface);
     private storagePrefix = '_cache_';
     private settingsKey = `cache_settings`;
-
-    cacheSettings = signal<CacheSettingsInterface>({} as CacheSettingsInterface);
 
     constructor() {
         this.loadCacheSettings();
@@ -16,29 +15,8 @@ export class RequestCacheService {
         this.saveCacheSettingsOnChange();
     }
 
-    private loadCacheSettings() {
-        const savedSettings = JSON.parse(localStorage.getItem(this.settingsKey));
-        this.cacheSettings.set(savedSettings || {
-            duration: CACHE.DURATION,
-            multiplier: CACHE.MULTIPLIER
-        });
-    }
-
     public setCacheSettings(settings: CacheSettingsInterface) {
         this.cacheSettings.set(settings);
-    }
-
-    private saveCacheSettingsOnChange() {
-        effect(() => {
-            const cacheSettings = this.cacheSettings();
-            if (!cacheSettings.duration) {
-                cacheSettings.duration = CACHE.DURATION;
-            }
-            if (!cacheSettings.multiplier) {
-                cacheSettings.multiplier = CACHE.MULTIPLIER;
-            }
-            localStorage.setItem(this.settingsKey, JSON.stringify(this.cacheSettings()));
-        });
     }
 
     // cache duration can be modified when calling the request (cache duration can be different for each request)
@@ -74,6 +52,31 @@ export class RequestCacheService {
         alert('Request cache cleared!');
     }
 
+    public isExpired(cachedItem: CachedItemInterface) {
+        return Date.now() > cachedItem.expiration
+    }
+
+    private loadCacheSettings() {
+        const savedSettings = JSON.parse(localStorage.getItem(this.settingsKey));
+        this.cacheSettings.set(savedSettings || {
+            duration: CACHE.DURATION,
+            multiplier: CACHE.MULTIPLIER
+        });
+    }
+
+    private saveCacheSettingsOnChange() {
+        effect(() => {
+            const cacheSettings = this.cacheSettings();
+            if (!cacheSettings.duration) {
+                cacheSettings.duration = CACHE.DURATION;
+            }
+            if (!cacheSettings.multiplier) {
+                cacheSettings.multiplier = CACHE.MULTIPLIER;
+            }
+            localStorage.setItem(this.settingsKey, JSON.stringify(this.cacheSettings()));
+        });
+    }
+
     private clearExpiredCache() {
         for (const key of Object.keys(localStorage)) {
             if (key.startsWith(this.storagePrefix)) {
@@ -84,9 +87,5 @@ export class RequestCacheService {
                 }
             }
         }
-    }
-
-    public isExpired(cachedItem: CachedItemInterface) {
-        return Date.now() > cachedItem.expiration
     }
 }

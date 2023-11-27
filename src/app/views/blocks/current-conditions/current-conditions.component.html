@@ -1,15 +1,15 @@
 <div>
     <app-tabs [tabsIdentifier]="this.tabsIdentifier">
-        <app-tab *ngFor="let location of currentConditionsByZip(); trackBy: this.currentConditionsByZipTrackBy">
+        <app-tab *ngFor="let location of this.currentConditionsByZip(); trackBy: this.currentConditionsByZipTrackBy">
             <ng-template appTabHeader>
                 <div class="location-header">
                     <span class="location-title">
                        {{ location.data.name }} ({{ location.zip }})
                     </span>
-                    <span class="location-remove" (click)="locationService.removeLocation(location.zip)">&times;</span>
+                    <span class="location-remove" (click)="this.locationService.removeLocation(location.zip)">&times;</span>
                 </div>
             </ng-template>
-            <ng-template appTabBody let-tabIndex>
+            <ng-template appTabBody>
                 <div class="location-body well flex" (click)="this.showForecast(location.zip)">
                     <div>
                         <h4>Current conditions: {{ location.data.weather[0].main }}</h4>

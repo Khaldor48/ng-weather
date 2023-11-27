@@ -104,15 +104,14 @@ export class WeatherService {
     }
 
     private handleCurrentConditionError(error: WeatherApiErrorInterface, zipcode: string): Observable<void> {
+        console.error(error);
+
         if (error.cod) {
             const errorText = `Error(${error.cod}) occurred while loading condition for zipcode: ${zipcode} - message: ${error.message}`;
             alert(errorText);
-            console.error(errorText);
             this.locationsWithErrors.push(zipcode);
-            return of();
         }
 
-        console.error(error);
         return of();
     }
 

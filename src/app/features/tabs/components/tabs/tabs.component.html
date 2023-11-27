@@ -9,7 +9,8 @@
         </div>
     </div>
     <div class="tab-content">
-        <div *ngFor="let tab of this.tabs; let tabIndex = index" [class.active]="this.activatedTabIndex$$() === tabIndex"
+        <div *ngFor="let tab of this.tabs; let tabIndex = index"
+             [class.active]="this.activatedTabIndex$$() === tabIndex"
              class="tab-body">
             <ng-container
                     *ngTemplateOutlet="tab.body?.template ?? defaultBodyTemplate; context: { $implicit: tabIndex }"/>
