@@ -31,6 +31,7 @@ export class WeatherService {
      * - Tracks locations with errors during data fetching and removes them from the location service to prevent future errors.
      */
     private listenToLocationChanges(): void {
+        // No need to unsubscribe since this is singleton service
         this.locationService.locations$.pipe(
             tap(() => this.locationsWithErrors = []),
             tap((locations) => this.removeNotNeededConditions(locations)),
